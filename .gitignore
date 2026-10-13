@@ -1,0 +1,25 @@
+.github/
+project_overview/
+
+# Documentations
+PRD.md
+CLAUDE.md
+RULES.md
+OVERVIEW.md
+ARCHITECTURE.md
+SHIKSHA_SETU_IMPLEMENTATION_PLAN.md
+
+.env
+.env.*
+!.env.example
+
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+.venv/
+node_modules/
+
+dist/
+
+frontend/.vite/

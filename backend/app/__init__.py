@@ -1,0 +1,1 @@
+"""Shiksha Setu backend application."""
