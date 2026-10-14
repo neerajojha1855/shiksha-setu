@@ -2,7 +2,7 @@
 
 Shiksha Setu connects under-resourced schools with donors, volunteers, and verified education-support programs.
 
-This repository currently contains the Week 1 foundation:
+This repository currently contains the Week 1 foundation and D6 authentication:
 
 - `frontend/`: React, Vite, and TypeScript client
 - `backend/`: FastAPI service with SQLAlchemy, Alembic, and Neon PostgreSQL configuration
@@ -47,6 +47,16 @@ API endpoints:
 - `GET http://localhost:8000/ready` — application and database readiness
 - `GET http://localhost:8000/docs` — FastAPI OpenAPI documentation
 
+Authentication endpoints:
+
+- `POST /api/auth/register` — create a donor, school, or volunteer account
+- `POST /api/auth/login` — authenticate by email or username
+- `POST /api/auth/refresh` — rotate a refresh token and issue new tokens
+- `POST /api/auth/logout` — revoke a refresh session
+- `GET /api/auth/me` — return the authenticated user
+
+Use a long random `JWT_SECRET_KEY` in non-development environments. Access tokens are short-lived JWTs; refresh tokens are opaque, rotated, revocable values whose hashes are stored in PostgreSQL. Administrator accounts must be provisioned by an administrator rather than through public registration.
+
 ## Frontend setup
 
 ```bash
@@ -76,7 +86,7 @@ pytest
 pytest tests/test_health.py -q
 ```
 
-The current backend tests use configuration-independent liveness checks. Database integration tests will be added when the domain workflows are implemented.
+The backend auth tests use an isolated in-memory database. Database integration checks use the configured Neon database through Alembic and the readiness endpoint.
 
 ## Development data and credentials
 
