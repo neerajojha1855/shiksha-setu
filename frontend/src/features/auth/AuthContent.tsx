@@ -1,6 +1,8 @@
 import { FormEvent, ReactNode, useState } from "react";
 
 import logo from "../../assets/image/logo.png";
+import { ProtectedRoute } from "../../components/layout/ProtectedRoute";
+import { RoleGate } from "../../components/layout/RoleGate";
 import type {
   AuthResponse,
   AuthState,
@@ -29,7 +31,11 @@ export function AuthContent({
   const [notice, setNotice] = useState<string | null>(null);
 
   if (auth) {
-    return <Dashboard auth={auth} onLogout={onLogout} />;
+    return (
+      <ProtectedRoute auth={auth}>
+        <Dashboard auth={auth} onLogout={onLogout} />
+      </ProtectedRoute>
+    );
   }
 
   return (
@@ -394,16 +400,33 @@ function Dashboard({ auth, onLogout }: { auth: AuthState; onLogout: () => Promis
           action here as the platform grows.
         </p>
         <div className="dashboard-grid">
-          <article className="dashboard-card accent-card">
-            <span className="card-kicker">Account role</span>
-            <strong>{auth.user.role}</strong>
-            <p>Role-based tools and workflows will appear in this workspace.</p>
-          </article>
-          <article className="dashboard-card">
-            <span className="card-kicker">Your impact</span>
-            <strong>Ready to begin</strong>
-            <p>Small actions can help resources reach the learners who need them.</p>
-          </article>
+          <RoleGate
+            role={auth.user.role}
+            allowedRoles={["donor", "school", "volunteer", "administrator"]}
+          >
+            <article className="dashboard-card accent-card">
+              <span className="card-kicker">Account role</span>
+              <strong>{auth.user.role}</strong>
+              <p>Role-based tools and workflows will appear in this workspace.</p>
+            </article>
+          </RoleGate>
+          <RoleGate
+            role={auth.user.role}
+            allowedRoles={["administrator"]}
+            fallback={
+              <article className="dashboard-card">
+                <span className="card-kicker">Your impact</span>
+                <strong>Ready to begin</strong>
+                <p>Small actions can help resources reach the learners who need them.</p>
+              </article>
+            }
+          >
+            <article className="dashboard-card">
+              <span className="card-kicker">Administration</span>
+              <strong>Review queue</strong>
+              <p>Administrative verification and moderation tools will appear here.</p>
+            </article>
+          </RoleGate>
         </div>
       </section>
     </main>

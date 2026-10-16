@@ -450,6 +450,50 @@ input:not([type="radio"]):not([type="checkbox"]):focus {
   background: #f5f3ed;
 }
 
+.access-denied-page {
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+  padding: 1.5rem;
+  background: #f5f3ed;
+}
+
+.access-denied-card {
+  width: min(100%, 34rem);
+  padding: 3rem;
+  text-align: center;
+  background: #fffdf8;
+  border: 1px solid #dce6df;
+  border-radius: 1rem;
+  box-shadow: 0 1.5rem 4rem rgb(23 53 44 / 8%);
+}
+
+.access-denied-icon {
+  display: grid;
+  width: 3rem;
+  height: 3rem;
+  margin: 0 auto 1.5rem;
+  place-items: center;
+  color: #fff;
+  background: #bd6f3e;
+  border-radius: 50%;
+  font-weight: 700;
+}
+
+.access-denied-card h1 {
+  margin: 0;
+  color: #1a503f;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: clamp(2rem, 5vw, 3rem);
+  letter-spacing: -0.04em;
+}
+
+.access-denied-card p:last-child {
+  margin: 1rem 0 0;
+  color: #64766d;
+  line-height: 1.6;
+}
+
 .dashboard-header {
   display: flex;
   align-items: center;

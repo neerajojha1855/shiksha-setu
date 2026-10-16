@@ -2,6 +2,7 @@ import hashlib
 import secrets
 import uuid
 from datetime import datetime, timedelta, timezone
+from collections.abc import Callable
 
 import jwt
 from fastapi import Depends, HTTPException, status
@@ -116,6 +117,41 @@ def get_current_user(
     token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
 ) -> User:
     return get_user_from_access_token(token, db)
+
+
+def require_roles(*allowed_roles: UserRole) -> Callable[..., User]:
+    def role_dependency(current_user: User = Depends(get_current_user)) -> User:
+        if current_user.role not in allowed_roles:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="You do not have permission to perform this action",
+            )
+        return current_user
+
+    return role_dependency
+
+
+def require_administrator() -> Callable[..., User]:
+    return require_roles(UserRole.administrator)
+
+
+def require_self_or_roles(
+    *allowed_roles: UserRole,
+) -> Callable[..., User]:
+    roles = allowed_roles or (UserRole.administrator,)
+
+    def ownership_dependency(
+        user_id: uuid.UUID,
+        current_user: User = Depends(get_current_user),
+    ) -> User:
+        if current_user.id != user_id and current_user.role not in roles:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="You can only access your own account",
+            )
+        return current_user
+
+    return ownership_dependency
 
 
 def revoke_refresh_session(db: Session, raw_token: str) -> None:

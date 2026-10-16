@@ -1,3 +1,5 @@
+import uuid
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import or_, select
 from sqlalchemy.exc import IntegrityError
@@ -11,6 +13,8 @@ from app.auth import (
     issue_access_token,
     issue_tokens,
     normalize_email,
+    require_administrator,
+    require_self_or_roles,
     revoke_refresh_session,
     rotate_refresh_session,
 )
@@ -114,3 +118,24 @@ def logout(payload: LogoutRequest, db: Session = Depends(get_db)) -> None:
 @router.get("/me", response_model=UserResponse)
 def me(current_user: User = Depends(get_current_user)) -> UserResponse:
     return user_response(current_user)
+
+
+@router.get("/users", response_model=list[UserResponse])
+def list_users(
+    db: Session = Depends(get_db),
+    _: User = Depends(require_administrator()),
+) -> list[UserResponse]:
+    users = db.scalars(select(User).order_by(User.created_at.desc())).all()
+    return [user_response(user) for user in users]
+
+
+@router.get("/users/{user_id}", response_model=UserResponse)
+def get_user(
+    user_id: uuid.UUID,
+    db: Session = Depends(get_db),
+    _: User = Depends(require_self_or_roles()),
+) -> UserResponse:
+    user = db.get(User, user_id)
+    if user is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    return user_response(user)
