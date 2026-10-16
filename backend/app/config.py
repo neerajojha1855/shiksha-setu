@@ -10,6 +10,9 @@ class Settings(BaseSettings):
     frontend_origin: str = "http://localhost:5173"
     database_url: str = ""
     direct_database_url: str = ""
+    jwt_secret_key: str = "development-only-change-this-secret"
+    access_token_expire_minutes: int = 15
+    refresh_token_expire_days: int = 30
     llm_provider: str = "ollama"
     ollama_base_url: str = "http://localhost:11434/v1"
     ollama_model: str = "qwen3:8b"
