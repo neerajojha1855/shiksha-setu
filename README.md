@@ -2,7 +2,7 @@
 
 Shiksha Setu connects under-resourced schools with donors, volunteers, and verified education-support programs.
 
-This repository currently contains the Week 1 foundation, D6 authentication, and D7 authorization:
+This repository currently contains the Week 1 foundation, D6 authentication, D7 authorization, and D8 school onboarding:
 
 - `frontend/`: React, Vite, and TypeScript client
 - `backend/`: FastAPI service with SQLAlchemy, Alembic, and Neon PostgreSQL configuration
@@ -56,10 +56,19 @@ Authentication endpoints:
 - `GET /api/auth/me` — return the authenticated user
 - `GET /api/auth/users` — list accounts (administrator only)
 - `GET /api/auth/users/{user_id}` — return an account (the account owner or an administrator)
+- `POST /api/schools/profile` — create a school profile (school role only)
+- `GET /api/schools/profile` — return the signed-in school profile
+- `POST /api/schools/profile/verification` — submit restricted verification evidence
+- `GET /api/schools/profile/verifications` — return the school’s verification history
+- `GET /api/admin/school-verifications` — review queue (administrator only)
+- `POST /api/admin/school-verifications/{verification_id}/decision` — approve or reject a submission
+- `GET /api/admin/audit-events` — review onboarding audit events (administrator only)
 
 Use a long random `JWT_SECRET_KEY` in non-development environments. Access tokens are short-lived JWTs; refresh tokens are opaque, rotated, revocable values whose hashes are stored in PostgreSQL. Administrator accounts must be provisioned by an administrator rather than through public registration.
 
 Protected endpoints require an `Authorization: Bearer <access-token>` header. Authorization is enforced by the backend using role checks and ownership checks; frontend route and role gates only control presentation.
+
+School profiles expose only safe school-level information. Verification references and evidence descriptions are restricted to the school representative and administrators. Every profile creation, verification submission, and review decision creates an audit event.
 
 ## Frontend setup
 

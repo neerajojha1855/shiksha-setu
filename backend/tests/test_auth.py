@@ -30,6 +30,7 @@ client = TestClient(app)
 
 @pytest.fixture(autouse=True)
 def clear_database() -> Generator[None, None, None]:
+    app.dependency_overrides[get_db] = override_get_db
     yield
     with test_engine.begin() as connection:
         for table in reversed(Base.metadata.sorted_tables):

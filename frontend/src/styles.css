@@ -494,6 +494,79 @@ input:not([type="radio"]):not([type="checkbox"]):focus {
   line-height: 1.6;
 }
 
+.onboarding-card h2 {
+  margin: 0.4rem 0;
+  color: #1a503f;
+}
+
+.onboarding-form {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.onboarding-form input,
+.onboarding-form textarea {
+  width: 100%;
+  padding: 0.8rem 0.9rem;
+  color: #17352c;
+  background: #fff;
+  border: 1px solid #cad8d0;
+  border-radius: 0.55rem;
+  font: inherit;
+}
+
+.onboarding-form textarea {
+  min-height: 6rem;
+  resize: vertical;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.verification-history {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.verification-history h3 {
+  margin: 0;
+  color: #1a503f;
+  font-size: 1rem;
+}
+
+.verification-item {
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.8rem;
+  background: #f5f3ed;
+  border-radius: 0.55rem;
+}
+
+.verification-item span,
+.verification-item p {
+  margin: 0;
+  color: #64766d;
+  font-size: 0.9rem;
+}
+
+.review-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+}
+
+@media (max-width: 620px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
 .dashboard-header {
   display: flex;
   align-items: center;

@@ -3,6 +3,8 @@ import { FormEvent, ReactNode, useState } from "react";
 import logo from "../../assets/image/logo.png";
 import { ProtectedRoute } from "../../components/layout/ProtectedRoute";
 import { RoleGate } from "../../components/layout/RoleGate";
+import { SchoolOnboarding } from "../schools/SchoolOnboarding";
+import { AdminVerificationQueue } from "../schools/AdminVerificationQueue";
 import type {
   AuthResponse,
   AuthState,
@@ -426,6 +428,12 @@ function Dashboard({ auth, onLogout }: { auth: AuthState; onLogout: () => Promis
               <strong>Review queue</strong>
               <p>Administrative verification and moderation tools will appear here.</p>
             </article>
+          </RoleGate>
+          <RoleGate role={auth.user.role} allowedRoles={["school"]}>
+            <SchoolOnboarding auth={auth} />
+          </RoleGate>
+          <RoleGate role={auth.user.role} allowedRoles={["administrator"]}>
+            <AdminVerificationQueue auth={auth} />
           </RoleGate>
         </div>
       </section>

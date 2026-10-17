@@ -31,6 +31,7 @@ client = TestClient(app)
 
 @pytest.fixture(autouse=True)
 def clean_database() -> Generator[None, None, None]:
+    app.dependency_overrides[get_db] = override_get_db
     clear_database()
     yield
     clear_database()
