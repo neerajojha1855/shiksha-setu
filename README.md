@@ -63,6 +63,14 @@ Authentication endpoints:
 - `GET /api/admin/school-verifications` — review queue (administrator only)
 - `POST /api/admin/school-verifications/{verification_id}/decision` — approve or reject a submission
 - `GET /api/admin/audit-events` — review onboarding audit events (administrator only)
+- `POST /api/needs` — create a school need as a draft (school role only)
+- `GET /api/needs` — discover published needs with search, filters, and pagination
+- `GET /api/needs/{need_id}` — view a published need
+- `PATCH /api/needs/{need_id}` — edit an owned draft, published, or paused need
+- `POST /api/needs/{need_id}/publish` — publish an owned need (approved schools only)
+- `POST /api/needs/{need_id}/pause` — pause a published owned need
+- `POST /api/needs/{need_id}/close` — close an owned need
+- `GET /api/needs/school/mine` — list all needs for the signed-in school
 
 Use a long random `JWT_SECRET_KEY` in non-development environments. Access tokens are short-lived JWTs; refresh tokens are opaque, rotated, revocable values whose hashes are stored in PostgreSQL. Administrator accounts must be provisioned by an administrator rather than through public registration.
 
