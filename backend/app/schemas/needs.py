@@ -52,3 +52,15 @@ class NeedResponse(BaseModel):
     created_at: datetime
     updated_at: datetime
 
+
+class PublicNeedResponse(NeedResponse):
+    school_name: str
+    school_verification_status: str
+    fulfillment_percent: int
+
+
+class PublicNeedListResponse(BaseModel):
+    items: list[PublicNeedResponse]
+    total: int
+    offset: int
+    limit: int

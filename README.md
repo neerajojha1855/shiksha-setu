@@ -65,6 +65,7 @@ Authentication endpoints:
 - `GET /api/admin/audit-events` — review onboarding audit events (administrator only)
 - `POST /api/needs` — create a school need as a draft (school role only)
 - `GET /api/needs` — discover published needs with search, filters, and pagination
+- `GET /api/needs/discover` — paginated public discovery results with school verification and fulfillment progress
 - `GET /api/needs/{need_id}` — view a published need
 - `PATCH /api/needs/{need_id}` — edit an owned draft, published, or paused need
 - `POST /api/needs/{need_id}/publish` — publish an owned need (approved schools only)
