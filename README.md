@@ -29,6 +29,8 @@ cp .env.example .env
 
 Set `DATABASE_URL` in `backend/.env` to Neon's pooled runtime connection string. Set `DIRECT_DATABASE_URL` to Neon's direct connection string for migrations when available. Both values must include SSL parameters.
 
+For the linked Neon project, `neon deploy` writes `DATABASE_URL`, `DATABASE_URL_UNPOOLED`, and `NEON_BRANCH` to the root `.env.local`. The backend reads that file automatically when `backend/.env` does not provide overrides; `DATABASE_URL_UNPOOLED` is used as the migration connection fallback.
+
 Run the API:
 
 ```bash
@@ -72,6 +74,12 @@ Authentication endpoints:
 - `POST /api/needs/{need_id}/pause` — pause a published owned need
 - `POST /api/needs/{need_id}/close` — close an owned need
 - `GET /api/needs/school/mine` — list all needs for the signed-in school
+- `GET /api/donations` — discover active donation listings with filters and pagination
+- `GET /api/donations/profile` / `POST /api/donations/profile` — read or create the signed-in donor profile
+- `GET /api/donations/mine` — list the signed-in donor's listings
+- `POST /api/donations` — create a donation listing
+- `PATCH /api/donations/{donation_id}` — edit an active owned listing
+- `POST /api/donations/{donation_id}/withdraw` — withdraw an owned listing without deleting its history
 
 Use a long random `JWT_SECRET_KEY` in non-development environments. Access tokens are short-lived JWTs; refresh tokens are opaque, rotated, revocable values whose hashes are stored in PostgreSQL. Administrator accounts must be provisioned by an administrator rather than through public registration.
 

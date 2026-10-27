@@ -651,6 +651,53 @@ input:not([type="radio"]):not([type="checkbox"]):focus {
   line-height: 1.5;
 }
 
+.dashboard-card h2,
+.workspace-subheading {
+  margin: 0.4rem 0;
+  color: #1a503f;
+}
+
+.workspace-subheading {
+  margin-top: 2rem;
+  font-size: 1.05rem;
+}
+
+.donation-workspace {
+  grid-column: 1 / -1;
+}
+
+.donation-list {
+  display: grid;
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+
+.donation-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem;
+  background: #f5f3ed;
+  border-radius: 0.55rem;
+}
+
+.donation-item strong,
+.donation-item span {
+  display: block;
+}
+
+.donation-item strong {
+  color: #275140;
+  font-size: 0.95rem;
+}
+
+.donation-item span {
+  margin-top: 0.25rem;
+  color: #64766d;
+  font-size: 0.8rem;
+}
+
 .discovery-page {
   min-height: 100vh;
   background: #f5f3ed;
