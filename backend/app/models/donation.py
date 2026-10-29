@@ -61,3 +61,22 @@ class Donation(Base):
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False
     )
+
+
+class DonationImage(Base):
+    __tablename__ = "donation_images"
+
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4)
+    donation_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, ForeignKey("donations.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    asset_id: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
+    public_id: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
+    secure_url: Mapped[str] = mapped_column(String(1000), nullable=False)
+    format: Mapped[str] = mapped_column(String(20), nullable=False)
+    bytes: Mapped[int] = mapped_column(Integer, nullable=False)
+    width: Mapped[int] = mapped_column(Integer, nullable=False)
+    height: Mapped[int] = mapped_column(Integer, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )

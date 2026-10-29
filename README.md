@@ -80,6 +80,9 @@ Authentication endpoints:
 - `POST /api/donations` — create a donation listing
 - `PATCH /api/donations/{donation_id}` — edit an active owned listing
 - `POST /api/donations/{donation_id}/withdraw` — withdraw an owned listing without deleting its history
+- `POST /api/donations/{donation_id}/images` — upload an owned donation image to Cloudinary
+- `GET /api/donations/{donation_id}/images` — list image metadata for an owned donation
+- `DELETE /api/donations/{donation_id}/images/{image_id}` — remove an owned donation image from Cloudinary
 
 Use a long random `JWT_SECRET_KEY` in non-development environments. Access tokens are short-lived JWTs; refresh tokens are opaque, rotated, revocable values whose hashes are stored in PostgreSQL. Administrator accounts must be provisioned by an administrator rather than through public registration.
 

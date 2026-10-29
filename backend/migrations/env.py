@@ -5,7 +5,7 @@ from sqlalchemy import engine_from_config, pool
 
 from app.config import get_settings
 from app.db import Base
-from app.models import AuditEvent, Donation, DonorProfile, Need, School, SchoolVerificationRecord, User
+from app.models import AuditEvent, Donation, DonationImage, DonorProfile, Need, School, SchoolVerificationRecord, User
 
 config = context.config
 settings = get_settings()

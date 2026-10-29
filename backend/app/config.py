@@ -21,6 +21,10 @@ class Settings(BaseSettings):
     ollama_base_url: str = "http://localhost:11434/v1"
     ollama_model: str = "qwen3:8b"
     ollama_api_key: str = ""
+    cloudinary_cloud_name: str = ""
+    cloudinary_api_key: str = ""
+    cloudinary_api_secret: str = ""
+    cloudinary_folder: str = "shiksha-setu/donations"
 
     model_config = SettingsConfigDict(
         env_file=(".env", "../.env.local"),

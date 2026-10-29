@@ -29,6 +29,13 @@ type Donation = {
   status: "active" | "withdrawn";
 };
 
+type DonationImage = {
+  id: string;
+  donation_id: string;
+  secure_url: string;
+  format: string;
+};
+
 const emptyProfile = { display_name: "", organization: "", bio: "", city: "", region: "" };
 const emptyDonation = {
   title: "", description: "", category: "", quantity_available: "1", condition: "",
@@ -39,6 +46,7 @@ export function DonationWorkspace({ auth }: { auth: AuthState }) {
   const [profile, setProfile] = useState<DonorProfile | null>(null);
   const [profileForm, setProfileForm] = useState(emptyProfile);
   const [donations, setDonations] = useState<Donation[]>([]);
+  const [images, setImages] = useState<Record<string, DonationImage[]>>({});
   const [form, setForm] = useState(emptyDonation);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
@@ -115,6 +123,26 @@ export function DonationWorkspace({ auth }: { auth: AuthState }) {
     }
   }
 
+  async function uploadImage(donationId: string, file: File): Promise<void> {
+    setError(null);
+    const body = new FormData();
+    body.append("file", file);
+    try {
+      const image = await apiRequest<DonationImage>(
+        `/api/donations/${donationId}/images`,
+        { method: "POST", body },
+        auth.accessToken,
+      );
+      setImages((current) => ({
+        ...current,
+        [donationId]: [...(current[donationId] ?? []), image],
+      }));
+      setNotice("Image uploaded.");
+    } catch (requestError) {
+      setError(requestError instanceof ApiError ? requestError.message : "Unable to upload image.");
+    }
+  }
+
   if (loading) return <article className="dashboard-card">Loading your donation workspace…</article>;
 
   return (
@@ -168,6 +196,23 @@ export function DonationWorkspace({ auth }: { auth: AuthState }) {
                 <div>
                   <strong>{donation.title}</strong>
                   <span>{donation.category} · {donation.quantity_available - donation.quantity_reserved} available · {donation.status}</span>
+                  {donation.status === "active" && (
+                    <label className="image-upload-label">
+                      Add image
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp"
+                        onChange={(event) => {
+                          const file = event.target.files?.[0];
+                          if (file) void uploadImage(donation.id, file);
+                          event.currentTarget.value = "";
+                        }}
+                      />
+                    </label>
+                  )}
+                  {images[donation.id]?.map((image) => (
+                    <img className="donation-thumbnail" key={image.id} src={image.secure_url} alt={`${donation.title} donation`} />
+                  ))}
                 </div>
                 {donation.status === "active" && <button className="outline-button" type="button" onClick={() => withdraw(donation.id)}>Withdraw</button>}
               </div>

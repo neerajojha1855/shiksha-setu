@@ -1,19 +1,25 @@
 import json
+import logging
 import uuid
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+import cloudinary.exceptions
+from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile, status
 from sqlalchemy import func, select
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from app.auth import require_roles
+from app.cloudinary_client import delete_image, upload_image
+from app.config import get_settings
 from app.db import get_db
-from app.models.donation import Donation, DonationStatus, DonorProfile
+from app.models.donation import Donation, DonationImage, DonationStatus, DonorProfile
 from app.models.school import AuditEvent
 from app.models.user import User, UserRole
 from app.schemas.donations import (
     DonationCreate,
     DonationResponse,
     DonationUpdate,
+    DonationImageResponse,
     DonorProfileCreate,
     DonorProfileResponse,
     PublicDonationListResponse,
@@ -21,6 +27,9 @@ from app.schemas.donations import (
 )
 
 router = APIRouter(prefix="/donations", tags=["donations"])
+logger = logging.getLogger(__name__)
+ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/webp"}
+MAX_IMAGE_BYTES = 5 * 1024 * 1024
 
 
 def _public_donation(row: tuple[Donation, DonorProfile]) -> PublicDonationResponse:
@@ -51,6 +60,20 @@ def _owned_donation(db: Session, donation_id: uuid.UUID, user_id: uuid.UUID) -> 
     if donation.donor_id != user_id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You do not own this donation")
     return donation
+
+
+def _owned_image(
+    db: Session, donation_id: uuid.UUID, image_id: uuid.UUID, user_id: uuid.UUID
+) -> DonationImage:
+    donation = _owned_donation(db, donation_id, user_id)
+    image = db.scalar(
+        select(DonationImage).where(
+            DonationImage.id == image_id, DonationImage.donation_id == donation.id
+        )
+    )
+    if image is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Donation image not found")
+    return image
 
 
 def _audit(db: Session, actor_id: uuid.UUID, action: str, resource_id: uuid.UUID) -> None:
@@ -157,6 +180,86 @@ def create_donation(
     db.commit()
     db.refresh(donation)
     return donation
+
+
+@router.post("/{donation_id}/images", response_model=DonationImageResponse, status_code=status.HTTP_201_CREATED)
+def upload_donation_image(
+    donation_id: uuid.UUID,
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_roles(UserRole.donor)),
+) -> DonationImage:
+    donation = _owned_donation(db, donation_id, current_user.id)
+    if donation.status == DonationStatus.withdrawn:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Withdrawn donations cannot receive images")
+    if file.content_type not in ALLOWED_IMAGE_TYPES:
+        raise HTTPException(status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, detail="Only JPEG, PNG, and WebP images are supported")
+
+    contents = file.file.read(MAX_IMAGE_BYTES + 1)
+    if len(contents) > MAX_IMAGE_BYTES:
+        raise HTTPException(status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE, detail="Image must be 5 MB or smaller")
+    if not contents:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Image file is empty")
+
+    settings = get_settings()
+    try:
+        result = upload_image(
+            contents,
+            folder=f"{settings.cloudinary_folder}/{current_user.id}/{donation.id}",
+        )
+    except cloudinary.exceptions.Error as exc:
+        raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail="Image upload failed") from exc
+
+    image = DonationImage(
+        donation_id=donation.id,
+        asset_id=result["asset_id"],
+        public_id=result["public_id"],
+        secure_url=result["secure_url"],
+        format=result.get("format", ""),
+        bytes=result["bytes"],
+        width=result.get("width", 0),
+        height=result.get("height", 0),
+    )
+    db.add(image)
+    try:
+        db.commit()
+    except SQLAlchemyError as exc:
+        db.rollback()
+        try:
+            delete_image(result["public_id"])
+        except cloudinary.exceptions.Error:
+            logger.exception("Cloudinary cleanup failed for %s", result["public_id"])
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Image metadata could not be saved") from exc
+    db.refresh(image)
+    return image
+
+
+@router.get("/{donation_id}/images", response_model=list[DonationImageResponse])
+def list_donation_images(
+    donation_id: uuid.UUID,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_roles(UserRole.donor)),
+) -> list[DonationImage]:
+    donation = _owned_donation(db, donation_id, current_user.id)
+    return list(db.scalars(
+        select(DonationImage).where(DonationImage.donation_id == donation.id).order_by(DonationImage.created_at.desc())
+    ).all())
+
+
+@router.delete("/{donation_id}/images/{image_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_donation_image(
+    donation_id: uuid.UUID,
+    image_id: uuid.UUID,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_roles(UserRole.donor)),
+) -> None:
+    image = _owned_image(db, donation_id, image_id, current_user.id)
+    try:
+        delete_image(image.public_id)
+    except cloudinary.exceptions.Error as exc:
+        raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail="Image deletion failed") from exc
+    db.delete(image)
+    db.commit()
 
 
 @router.patch("/{donation_id}", response_model=DonationResponse)

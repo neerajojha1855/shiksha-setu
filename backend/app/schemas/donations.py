@@ -81,3 +81,16 @@ class PublicDonationListResponse(BaseModel):
     total: int
     offset: int
     limit: int
+
+
+class DonationImageResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: uuid.UUID
+    donation_id: uuid.UUID
+    secure_url: str
+    format: str
+    bytes: int
+    width: int
+    height: int
+    created_at: datetime
