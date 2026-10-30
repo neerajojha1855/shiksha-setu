@@ -83,6 +83,11 @@ Authentication endpoints:
 - `POST /api/donations/{donation_id}/images` — upload an owned donation image to Cloudinary
 - `GET /api/donations/{donation_id}/images` — list image metadata for an owned donation
 - `DELETE /api/donations/{donation_id}/images/{image_id}` — remove an owned donation image from Cloudinary
+- `POST /api/matches/generate/{need_id}` — generate deterministic, explainable matches for an owned published need
+- `GET /api/matches/need/{need_id}` — list ranked matches for an owned school need
+- `GET /api/matches/mine` — list proposed or accepted matches for the signed-in donor
+- `POST /api/matches/{match_id}/accept` — accept an accessible proposed match
+- `POST /api/matches/{match_id}/reject` — reject an accessible proposed match
 
 Use a long random `JWT_SECRET_KEY` in non-development environments. Access tokens are short-lived JWTs; refresh tokens are opaque, rotated, revocable values whose hashes are stored in PostgreSQL. Administrator accounts must be provisioned by an administrator rather than through public registration.
 

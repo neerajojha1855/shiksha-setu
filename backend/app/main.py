@@ -7,6 +7,7 @@ from app.config import get_settings
 from app.db import engine
 from app.routers.auth import router as auth_router
 from app.routers.needs import router as needs_router
+from app.routers.matches import router as matches_router
 from app.routers.donations import router as donations_router
 from app.routers.schools import admin_router as admin_router
 from app.routers.schools import router as schools_router
@@ -23,6 +24,7 @@ app.add_middleware(
 )
 app.include_router(auth_router, prefix=settings.api_prefix)
 app.include_router(needs_router, prefix=settings.api_prefix)
+app.include_router(matches_router, prefix=settings.api_prefix)
 app.include_router(donations_router, prefix=settings.api_prefix)
 app.include_router(schools_router, prefix=settings.api_prefix)
 app.include_router(admin_router, prefix=settings.api_prefix)
