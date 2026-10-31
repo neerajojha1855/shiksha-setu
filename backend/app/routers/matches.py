@@ -154,18 +154,31 @@ def list_need_matches(
     ]
 
 
-@router.get("/mine", response_model=list[MatchResponse])
+@router.get("/mine", response_model=list[MatchWithDetails])
 def list_donor_matches(
     db: Session = Depends(get_db),
     current_user: User = Depends(require_roles(UserRole.donor)),
 ) -> list[MatchResponse]:
-    matches = db.scalars(
-        select(DonationMatch)
+    rows = db.execute(
+        select(DonationMatch, Donation, Need)
         .join(Donation, Donation.id == DonationMatch.donation_id)
+        .join(Need, Need.id == DonationMatch.need_id)
         .where(Donation.donor_id == current_user.id, DonationMatch.status != MatchStatus.rejected)
         .order_by(DonationMatch.score.desc(), DonationMatch.created_at.desc())
     ).all()
-    return [_match_response(match) for match in matches]
+    return [
+        MatchWithDetails(
+            **_match_response(match).model_dump(),
+            need_title=need.title,
+            donation_title=donation.title,
+            quantity_remaining=donation.quantity_available - donation.quantity_reserved,
+            need_city=need.city,
+            need_region=need.region,
+            donation_city=donation.city,
+            donation_region=donation.region,
+        )
+        for match, donation, need in rows
+    ]
 
 
 @router.post("/{match_id}/accept", response_model=MatchResponse)
