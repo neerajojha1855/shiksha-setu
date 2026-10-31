@@ -651,6 +651,180 @@ input:not([type="radio"]):not([type="checkbox"]):focus {
   line-height: 1.5;
 }
 
+.dashboard-card h2,
+.workspace-subheading {
+  margin: 0.4rem 0;
+  color: #1a503f;
+}
+
+.workspace-subheading {
+  margin-top: 2rem;
+  font-size: 1.05rem;
+}
+
+.donation-workspace {
+  grid-column: 1 / -1;
+}
+
+.match-review-workspace {
+  grid-column: 1 / -1;
+}
+
+.match-list {
+  display: grid;
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+
+.match-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+  background: #f5f3ed;
+  border-radius: 0.55rem;
+}
+
+.match-item-copy {
+  min-width: 0;
+}
+
+.match-item-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.match-item-heading strong {
+  color: #275140;
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+
+.match-item-copy > span,
+.match-item-copy p {
+  display: block;
+  margin: 0.3rem 0 0;
+  color: #64766d;
+  font-size: 0.8rem;
+}
+
+.match-item-copy p {
+  max-width: 48rem;
+  line-height: 1.45;
+}
+
+.match-score,
+.match-status {
+  display: inline-flex;
+  padding: 0.25rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.match-score-high {
+  color: #1c6a4e;
+  background: #dcefe3;
+}
+
+.match-score-standard {
+  color: #8a5a26;
+  background: #f8ead2;
+}
+
+.match-status {
+  color: #64766d;
+  background: #e6ece7;
+}
+
+.match-status-accepted {
+  color: #1c6a4e;
+  background: #dcefe3;
+}
+
+.match-status-rejected {
+  color: #a0483d;
+  background: #f8dfda;
+}
+
+.match-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  flex: 0 0 auto;
+}
+
+.match-actions .primary-button,
+.match-actions .outline-button {
+  min-height: 2.5rem;
+  padding: 0.6rem 0.9rem;
+}
+
+.match-review-state {
+  margin-top: 1rem;
+}
+
+.donation-list {
+  display: grid;
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+
+.donation-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem;
+  background: #f5f3ed;
+  border-radius: 0.55rem;
+}
+
+.donation-item strong,
+.donation-item span {
+  display: block;
+}
+
+.image-upload-label {
+  display: inline-flex;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+  color: #a95f35;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.image-upload-label input {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  position: absolute;
+}
+
+.donation-thumbnail {
+  width: 4rem;
+  height: 4rem;
+  margin-top: 0.65rem;
+  object-fit: cover;
+  border-radius: 0.45rem;
+}
+
+.donation-item strong {
+  color: #275140;
+  font-size: 0.95rem;
+}
+
+.donation-item span {
+  margin-top: 0.25rem;
+  color: #64766d;
+  font-size: 0.8rem;
+}
+
 .discovery-page {
   min-height: 100vh;
   background: #f5f3ed;

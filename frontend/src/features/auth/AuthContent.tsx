@@ -5,6 +5,8 @@ import { ProtectedRoute } from "../../components/layout/ProtectedRoute";
 import { RoleGate } from "../../components/layout/RoleGate";
 import { SchoolOnboarding } from "../schools/SchoolOnboarding";
 import { AdminVerificationQueue } from "../schools/AdminVerificationQueue";
+import { DonationWorkspace } from "../donations/DonationWorkspace";
+import { MatchReviewWorkspace } from "../matches/MatchReviewWorkspace";
 import type {
   AuthResponse,
   AuthState,
@@ -431,9 +433,14 @@ function Dashboard({ auth, onLogout }: { auth: AuthState; onLogout: () => Promis
           </RoleGate>
           <RoleGate role={auth.user.role} allowedRoles={["school"]}>
             <SchoolOnboarding auth={auth} />
+            <MatchReviewWorkspace auth={auth} role="school" />
           </RoleGate>
           <RoleGate role={auth.user.role} allowedRoles={["administrator"]}>
             <AdminVerificationQueue auth={auth} />
+          </RoleGate>
+          <RoleGate role={auth.user.role} allowedRoles={["donor"]}>
+            <DonationWorkspace auth={auth} />
+            <MatchReviewWorkspace auth={auth} role="donor" />
           </RoleGate>
         </div>
       </section>
