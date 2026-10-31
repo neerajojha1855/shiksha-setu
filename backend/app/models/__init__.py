@@ -2,6 +2,7 @@ from app.models.school import AuditEvent, School, SchoolVerificationRecord, Veri
 from app.models.need import Need, NeedStatus
 from app.models.donation import Donation, DonationImage, DonationStatus, DonorProfile
 from app.models.match import DonationMatch, MatchStatus
+from app.models.reservation import DonationReservation, ReservationStatus
 from app.models.user import AuthSession, User, UserRole
 
 __all__ = [
@@ -15,6 +16,8 @@ __all__ = [
     "DonorProfile",
     "DonationMatch",
     "MatchStatus",
+    "DonationReservation",
+    "ReservationStatus",
     "School",
     "SchoolVerificationRecord",
     "User",

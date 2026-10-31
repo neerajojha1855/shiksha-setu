@@ -89,6 +89,11 @@ def test_school_can_generate_and_donor_can_accept_match() -> None:
     accepted = client.post(f"/api/matches/{match['id']}/accept", headers=donor_headers)
     assert accepted.status_code == 200
     assert accepted.json()["status"] == "accepted"
+    reservations = client.get("/api/reservations/mine", headers=donor_headers)
+    assert reservations.status_code == 200
+    assert reservations.json()[0]["match_id"] == match["id"]
+    assert reservations.json()[0]["quantity"] == 30
+    assert client.post(f"/api/reservations/matches/{match['id']}", headers=donor_headers).status_code == 409
 
     repeated = client.post(f"/api/matches/generate/{need_id}", headers=school_headers)
     assert repeated.status_code == 200

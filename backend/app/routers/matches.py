@@ -11,6 +11,7 @@ from app.matching import evaluate_match
 from app.models.donation import Donation, DonationStatus
 from app.models.match import DonationMatch, MatchStatus
 from app.models.need import Need, NeedStatus
+from app.routers.reservations import _reserve_match
 from app.models.school import AuditEvent, School, VerificationStatus
 from app.models.user import User, UserRole
 from app.schemas.matches import MatchResponse, MatchWithDetails
@@ -176,8 +177,7 @@ def accept_match(
     match = _authorized_match(db, match_id, current_user)
     if match.status is not MatchStatus.proposed:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Only proposed matches can be accepted")
-    match.status = MatchStatus.accepted
-    _audit(db, current_user.id, "donation_match.accepted", match.id)
+    _reserve_match(db, match.id, current_user.id)
     db.commit()
     db.refresh(match)
     return _match_response(match)

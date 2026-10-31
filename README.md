@@ -88,6 +88,8 @@ Authentication endpoints:
 - `GET /api/matches/mine` — list proposed or accepted matches for the signed-in donor
 - `POST /api/matches/{match_id}/accept` — accept an accessible proposed match
 - `POST /api/matches/{match_id}/reject` — reject an accessible proposed match
+- `POST /api/reservations/matches/{match_id}` — reserve the remaining compatible donation quantity transactionally
+- `GET /api/reservations/mine` — list reservations for the signed-in donor or school
 
 Use a long random `JWT_SECRET_KEY` in non-development environments. Access tokens are short-lived JWTs; refresh tokens are opaque, rotated, revocable values whose hashes are stored in PostgreSQL. Administrator accounts must be provisioned by an administrator rather than through public registration.
 
