@@ -11,6 +11,7 @@ from app.models.donation import Donation
 from app.models.match import DonationMatch, MatchStatus
 from app.models.need import Need
 from app.models.reservation import DonationReservation, ReservationStatus
+from app.models.distribution import Distribution, DistributionStatus, DistributionTransition
 from app.models.school import AuditEvent, School
 from app.models.user import User, UserRole
 from app.schemas.reservations import ReservationResponse
@@ -62,6 +63,20 @@ def _reserve_match(db: Session, match_id: uuid.UUID, actor_id: uuid.UUID) -> Don
     match.status = MatchStatus.accepted
     db.add(reservation)
     db.flush()
+    distribution = Distribution(
+        reservation_id=reservation.id,
+        quantity=quantity,
+        status=DistributionStatus.reserved,
+    )
+    db.add(distribution)
+    db.flush()
+    db.add(DistributionTransition(
+        distribution_id=distribution.id,
+        actor_id=actor_id,
+        from_status=None,
+        to_status=DistributionStatus.reserved,
+        note="Reservation created",
+    ))
     db.add(AuditEvent(
         actor_id=actor_id,
         action="donation.reserved",

@@ -90,6 +90,13 @@ Authentication endpoints:
 - `POST /api/matches/{match_id}/reject` — reject an accessible proposed match
 - `POST /api/reservations/matches/{match_id}` — reserve the remaining compatible donation quantity transactionally
 - `GET /api/reservations/mine` — list reservations for the signed-in donor or school
+- `GET /api/distributions/mine` — list distributions visible to the signed-in participant
+- `GET /api/distributions/{distribution_id}/history` — list immutable distribution transitions
+- `POST /api/distributions/{distribution_id}/dispatch` — move a reserved distribution into transit
+- `POST /api/distributions/{distribution_id}/mark-delivered` — mark delivery pending school confirmation
+- `POST /api/distributions/{distribution_id}/confirm-receipt` — school confirms receipt
+- `POST /api/distributions/{distribution_id}/verify` — administrator verifies the distribution
+- `POST /api/distributions/{distribution_id}/cancel` — cancel a reserved or in-transit distribution
 
 Use a long random `JWT_SECRET_KEY` in non-development environments. Access tokens are short-lived JWTs; refresh tokens are opaque, rotated, revocable values whose hashes are stored in PostgreSQL. Administrator accounts must be provisioned by an administrator rather than through public registration.
 
